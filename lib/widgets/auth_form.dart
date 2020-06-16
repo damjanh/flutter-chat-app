@@ -7,6 +7,7 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final _formKey = GlobalKey<FormState>();
+  var _isLogin = true;
   String _userEmail = '';
   String _userName = '';
   String _userPassword = '';
@@ -38,6 +39,7 @@ class _AuthFormState extends State<AuthForm> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   TextFormField(
+                    key: ValueKey('email'),
                     validator: (value) {
                       if (value.isEmpty || !value.contains('@')) {
                         return 'Please enter a valid email address.';
@@ -50,19 +52,22 @@ class _AuthFormState extends State<AuthForm> {
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(labelText: 'Email address'),
                   ),
+                  if (!_isLogin)
+                    TextFormField(
+                      key: ValueKey('username'),
+                      validator: (value) {
+                        if (value.isEmpty || value.length < 4) {
+                          return 'Please enter at least 4 characters.';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _userName = value;
+                      },
+                      decoration: InputDecoration(labelText: 'Username'),
+                    ),
                   TextFormField(
-                    validator: (value) {
-                      if (value.isEmpty || value.length < 4) {
-                        return 'Please enter at least 4 characters.';
-                      }
-                      return null;
-                    },
-                    onSaved: (value) {
-                      _userName = value;
-                    },
-                    decoration: InputDecoration(labelText: 'Username'),
-                  ),
-                  TextFormField(
+                    key: ValueKey('password'),
                     validator: (value) {
                       if (value.isEmpty || value.length < 7) {
                         return 'Password must be at least 7 characters long.';
@@ -79,13 +84,19 @@ class _AuthFormState extends State<AuthForm> {
                     height: 12,
                   ),
                   RaisedButton(
-                    child: Text('Login'),
+                    child: Text(_isLogin ? 'Login' : 'Sign Up'),
                     onPressed: _trySubmit,
                   ),
                   FlatButton(
-                    child: Text('Create new account'),
+                    child: Text(_isLogin
+                        ? 'Create new account'
+                        : 'Allready have account'),
                     textColor: Theme.of(context).primaryColor,
-                    onPressed: () {},
+                    onPressed: () {
+                      setState(() {
+                        _isLogin = !_isLogin;
+                      });
+                    },
                   )
                 ],
               ),
