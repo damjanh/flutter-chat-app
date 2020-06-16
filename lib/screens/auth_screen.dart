@@ -51,6 +51,10 @@ class _AuthScreenState extends State<AuthScreen> {
         message = err.message;
       }
 
+      setState(() {
+        _isLoading = false;
+      });
+
       Scaffold.of(ctx).showSnackBar(
         SnackBar(
           content: Text(message),
@@ -58,11 +62,10 @@ class _AuthScreenState extends State<AuthScreen> {
         ),
       );
     } catch (err) {
-      print(err);
-    } finally {
       setState(() {
         _isLoading = false;
       });
+      print(err);
     }
   }
 
